@@ -181,4 +181,3 @@ st.caption(
     "🏆 AI SPORTS QUIZ ARENA | "
     "Powered by Groq, ChromaDB and Web Search"
 )
-
