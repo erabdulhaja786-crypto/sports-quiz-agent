@@ -8,18 +8,33 @@ from src.web_search import search_live_news
 
 load_dotenv()
 
+
 _client = None
 
-
-def get_client() -> OpenAI:
+def get_client():
     global _client
+
     if _client is None:
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("GROQ_API_KEY")
+
+        # Read Streamlit Cloud Secrets if the key isn't an environment variable.
+        if not api_key:
+            try:
+                import streamlit as st
+                api_key = st.secrets["GROQ_API_KEY"]
+            except Exception:
+                api_key = None
+
         if not api_key:
             raise RuntimeError(
-                "OPENAI_API_KEY is not set. Copy .env.example to .env and add your key."
+                "GROQ_API_KEY is missing. Add it in Streamlit Cloud Secrets."
             )
-        _client = OpenAI(api_key=api_key)
+
+        _client = OpenAI(
+            api_key=api_key,
+            base_url="https://api.groq.com/openai/v1",
+        )
+
     return _client
 
 
@@ -83,7 +98,7 @@ def build_context(sport: str) -> str:
 def generate_quiz(sport: str, difficulty: str, context: str) -> dict:
     """Call the LLM, grounded strictly in `context`, and return parsed JSON."""
     client = get_client()
-    model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    model = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
     system_prompt = (
         "You are a rigorous sports quiz-writer. Generate quiz questions "
