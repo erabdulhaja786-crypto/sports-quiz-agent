@@ -35,53 +35,43 @@ if css_path.exists():
 # =====================================================
 # 3. HERO BANNER
 # =====================================================
-st.markdown(
-    """
-    <div style="
-        padding: 32px;
-        margin-bottom: 25px;
-        border-radius: 20px;
-        background:
-            radial-gradient(
-                circle at 90% 10%,
-                rgba(124, 58, 237, 0.28),
-                transparent 40%
-            ),
-            linear-gradient(120deg, #111C32, #0B1020);
-        border: 1px solid rgba(0, 229, 255, 0.35);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-    ">
-        <div style="
-            color: #00E5FF;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 3px;
-        ">
-            RAG POWERED • LIVE SPORTS INTELLIGENCE
-        </div>
+RAG POWERED • LIVE SPORTS INTELLIGENCE
+<h1 style="
+    margin: 14px 0 8px 0;
+    font-size: clamp(30px, 4vw, 44px);
+    color: #FFFFFF;
+">
+    🏆 ENTER THE ARENA
+</h1>
 
-        <h1 style="
-            margin: 14px 0 8px 0;
-            font-size: clamp(30px, 4vw, 44px);
-            color: #FFFFFF;
-        ">
-            🏆 ENTER THE ARENA
-        </h1>
+<p style="
+    color: #B7C5DF;
+    font-size: 16px;
+    margin-bottom: 0;
+">
+    Test your knowledge. Beat the challenge.
+    Own the scoreboard.
+</p>
+🎯 Your Next Challenge
+Choose a sport and difficulty in the sidebar, then generate a fresh AI-powered quiz.
 
-        <p style="
-            color: #B7C5DF;
-            font-size: 16px;
-            margin-bottom: 0;
-        ">
-            Test your knowledge. Beat the challenge.
-            Own the scoreboard.
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+🏟️
+<div style="
+    font-size: 23px;
+    font-weight: 750;
+    color: #F1F5FF;
+    margin: 12px 0;
+">
+    The Arena Is Ready
+</div>
 
-
+<div style="
+    color: #AAB9D3;
+    font-size: 15px;
+">
+    Choose your sport and difficulty.
+    Generate your challenge and test your knowledge.
+</div>
 # =====================================================
 # 4. INITIALIZE KNOWLEDGE BASE
 # =====================================================
@@ -228,44 +218,37 @@ if st.session_state.quiz_output:
             language="markdown",
         )
 
+
 else:
-    st.markdown(
-        """
+    st.markdown("""
+    <div style="
+        text-align: center;
+        padding: 35px 20px;
+        border-radius: 18px;
+        background: linear-gradient(145deg, #111A30, #0D1426);
+        border: 1px solid rgba(124, 145, 190, 0.25);
+        margin-top: 15px;
+    ">
+        <div style="font-size: 44px;">🏟️</div>
+
         <div style="
-            padding: 35px 24px;
-            text-align: center;
-            border-radius: 18px;
-            background:
-                radial-gradient(
-                    circle at 50% 0%,
-                    rgba(0, 229, 255, 0.08),
-                    transparent 65%
-                ),
-                linear-gradient(145deg, #111A2E, #0B1020);
-            border: 1px solid rgba(124, 145, 190, 0.25);
+            font-size: 23px;
+            font-weight: 750;
+            color: #F1F5FF;
+            margin: 12px 0;
         ">
-            <div style="font-size: 48px;">🏟️</div>
-
-            <div style="
-                font-size: 23px;
-                font-weight: 750;
-                color: #F1F5FF;
-                margin: 12px 0;
-            ">
-                The Arena Is Ready
-            </div>
-
-            <div style="
-                color: #AAB9D3;
-                font-size: 15px;
-            ">
-                Choose your sport and difficulty.
-                Generate your challenge and test your knowledge.
-            </div>
+            The Arena Is Ready
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
+
+        <div style="
+            color: #AAB9D3;
+            font-size: 15px;
+        ">
+            Choose your sport and difficulty.
+            Generate your challenge and test your knowledge.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # =====================================================
