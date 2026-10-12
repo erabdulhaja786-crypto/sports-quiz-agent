@@ -35,43 +35,34 @@ if css_path.exists():
 # =====================================================
 # 3. HERO BANNER
 # =====================================================
-RAG POWERED • LIVE SPORTS INTELLIGENCE
-<h1 style="
-    margin: 14px 0 8px 0;
-    font-size: clamp(30px, 4vw, 44px);
-    color: #FFFFFF;
-">
-    🏆 ENTER THE ARENA
-</h1>
 
-<p style="
-    color: #B7C5DF;
-    font-size: 16px;
-    margin-bottom: 0;
-">
-    Test your knowledge. Beat the challenge.
-    Own the scoreboard.
-</p>
-🎯 Your Next Challenge
-Choose a sport and difficulty in the sidebar, then generate a fresh AI-powered quiz.
+st.markdown(
+    """
+    <div style="padding: 28px; border-radius: 20px;
+                background: linear-gradient(135deg, #111A30, #17152F);
+                border: 1px solid rgba(0, 229, 255, 0.25);
+                margin-bottom: 25px;">
 
-🏟️
-<div style="
-    font-size: 23px;
-    font-weight: 750;
-    color: #F1F5FF;
-    margin: 12px 0;
-">
-    The Arena Is Ready
-</div>
+        <div style="color: #00E5FF; font-size: 12px;
+                    font-weight: 800; letter-spacing: 2px;">
+            RAG POWERED - LIVE SPORTS INTELLIGENCE
+        </div>
 
-<div style="
-    color: #AAB9D3;
-    font-size: 15px;
-">
-    Choose your sport and difficulty.
-    Generate your challenge and test your knowledge.
-</div>
+        <h1 style="margin: 14px 0 8px 0;
+                   font-size: clamp(30px, 4vw, 44px);
+                   color: #FFFFFF;">
+            🏆 ENTER THE ARENA
+        </h1>
+
+        <p style="color: #B7C5DF; font-size: 16px;">
+            Test your knowledge. Beat the challenge.
+            Own the scoreboard.
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
 # =====================================================
 # 4. INITIALIZE KNOWLEDGE BASE
 # =====================================================
