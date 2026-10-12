@@ -20,7 +20,7 @@ st.set_page_config(
 
 # =====================================================
 # 2. LOAD CUSTOM CSS
-# style.css must be in the same folder as app.py.
+# style.css must be beside app.py.
 # =====================================================
 css_path = Path(__file__).parent / "style.css"
 
@@ -35,26 +35,37 @@ if css_path.exists():
 # =====================================================
 # 3. HERO BANNER
 # =====================================================
-
 st.markdown(
     """
-    <div style="padding: 28px; border-radius: 20px;
-                background: linear-gradient(135deg, #111A30, #17152F);
-                border: 1px solid rgba(0, 229, 255, 0.25);
-                margin-bottom: 25px;">
-
-        <div style="color: #00E5FF; font-size: 12px;
-                    font-weight: 800; letter-spacing: 2px;">
+    <div style="
+        padding: 28px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #111A30, #17152F);
+        border: 1px solid rgba(0, 229, 255, 0.25);
+        margin-bottom: 25px;
+    ">
+        <div style="
+            color: #00E5FF;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        ">
             RAG POWERED - LIVE SPORTS INTELLIGENCE
         </div>
 
-        <h1 style="margin: 14px 0 8px 0;
-                   font-size: clamp(30px, 4vw, 44px);
-                   color: #FFFFFF;">
+        <h1 style="
+            margin: 14px 0 8px 0;
+            font-size: clamp(30px, 4vw, 44px);
+            color: #FFFFFF;
+        ">
             🏆 ENTER THE ARENA
         </h1>
 
-        <p style="color: #B7C5DF; font-size: 16px;">
+        <p style="
+            color: #B7C5DF;
+            font-size: 16px;
+            margin-bottom: 0;
+        ">
             Test your knowledge. Beat the challenge.
             Own the scoreboard.
         </p>
@@ -63,8 +74,10 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
 # =====================================================
 # 4. INITIALIZE KNOWLEDGE BASE
+# Cache successful initialization across reruns.
 # =====================================================
 @st.cache_resource
 def prepare_knowledge_base():
@@ -72,11 +85,17 @@ def prepare_knowledge_base():
 
 
 with st.spinner("Preparing the sports knowledge arena..."):
-    prepare_knowledge_base()
+    try:
+        prepare_knowledge_base()
+    except Exception as e:
+        st.error(
+            f"Failed to initialize the sports knowledge base: {e}"
+        )
+        st.stop()
 
 
 # =====================================================
-# 5. SIDEBAR — ARENA CONTROL
+# 5. SIDEBAR - ARENA CONTROL
 # =====================================================
 st.sidebar.markdown(
     """
@@ -95,6 +114,7 @@ st.sidebar.markdown(
         ">
             ARENA CONTROL
         </div>
+
         <div style="
             color: #FFFFFF;
             font-size: 22px;
@@ -120,12 +140,12 @@ difficulty = st.sidebar.select_slider(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.caption("Powered by Groq • ChromaDB • Web Search")
+st.sidebar.caption("Powered by Groq | ChromaDB | Web Search")
 
 
 # =====================================================
 # 6. SESSION STATE
-# Preserve the last generated quiz across reruns.
+# Keep the generated quiz when Streamlit reruns.
 # =====================================================
 if "quiz_output" not in st.session_state:
     st.session_state.quiz_output = None
@@ -164,12 +184,18 @@ if st.sidebar.button(
                 difficulty,
             )
 
-            st.session_state.quiz_output = quiz_text
-            st.session_state.quiz_context = context_used
-            st.session_state.quiz_sport = sport_choice
-            st.session_state.quiz_difficulty = difficulty
+            if not quiz_text:
+                st.warning(
+                    "The generator returned an empty quiz. "
+                    "Please try again."
+                )
+            else:
+                st.session_state.quiz_output = quiz_text
+                st.session_state.quiz_context = context_used
+                st.session_state.quiz_sport = sport_choice
+                st.session_state.quiz_difficulty = difficulty
 
-            st.success("🏆 Your quiz is ready!")
+                st.success("🏆 Your quiz is ready!")
 
         except Exception as e:
             st.error(f"Failed to generate quiz: {e}")
@@ -179,24 +205,26 @@ if st.sidebar.button(
 # 8. DISPLAY GENERATED QUIZ
 # =====================================================
 if st.session_state.quiz_output:
-    st.markdown(
-        f"### 🏆 {st.session_state.quiz_sport} Arena"
+    quiz_sport = st.session_state.quiz_sport or sport_choice
+    quiz_difficulty = (
+        st.session_state.quiz_difficulty or difficulty
     )
 
-    st.caption(
-        f"Difficulty: {st.session_state.quiz_difficulty}"
-    )
+    st.markdown(f"### 🏆 {quiz_sport} Arena")
+
+    st.caption(f"Difficulty: {quiz_difficulty}")
 
     st.text_area(
-        "📝 Generated Quiz — Copy and Share",
+        "📝 Generated Quiz - Copy and Share",
         value=st.session_state.quiz_output,
         height=350,
+        key="generated_quiz_display",
     )
 
     st.download_button(
         label="📥 Download Quiz",
         data=st.session_state.quiz_output,
-        file_name="sports_quiz.txt",
+        file_name=f"{quiz_sport.lower()}_quiz.txt",
         mime="text/plain",
         use_container_width=True,
     )
@@ -204,42 +232,46 @@ if st.session_state.quiz_output:
     with st.expander(
         "🔍 Inspect Ground Truth (RAG Context Used)"
     ):
-        st.code(
-            st.session_state.quiz_context or "",
-            language="markdown",
-        )
+        context = st.session_state.quiz_context or ""
 
+        if context:
+            st.code(context, language="markdown")
+        else:
+            st.info("No RAG context was returned by the generator.")
 
 else:
-    st.markdown("""
-    <div style="
-        text-align: center;
-        padding: 35px 20px;
-        border-radius: 18px;
-        background: linear-gradient(145deg, #111A30, #0D1426);
-        border: 1px solid rgba(124, 145, 190, 0.25);
-        margin-top: 15px;
-    ">
-        <div style="font-size: 44px;">🏟️</div>
-
+    st.markdown(
+        """
         <div style="
-            font-size: 23px;
-            font-weight: 750;
-            color: #F1F5FF;
-            margin: 12px 0;
+            text-align: center;
+            padding: 35px 20px;
+            border-radius: 18px;
+            background: linear-gradient(145deg, #111A30, #0D1426);
+            border: 1px solid rgba(124, 145, 190, 0.25);
+            margin-top: 15px;
         ">
-            The Arena Is Ready
-        </div>
+            <div style="font-size: 44px;">🏟️</div>
 
-        <div style="
-            color: #AAB9D3;
-            font-size: 15px;
-        ">
-            Choose your sport and difficulty.
-            Generate your challenge and test your knowledge.
+            <div style="
+                font-size: 23px;
+                font-weight: 750;
+                color: #F1F5FF;
+                margin: 12px 0;
+            ">
+                The Arena Is Ready
+            </div>
+
+            <div style="
+                color: #AAB9D3;
+                font-size: 15px;
+            ">
+                Choose your sport and difficulty.
+                Generate your challenge and test your knowledge.
+            </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # =====================================================
@@ -256,7 +288,8 @@ st.markdown(
         padding: 8px;
     ">
         🏆 AI SPORTS QUIZ ARENA
-        &nbsp;•&nbsp; Powered by Groq, ChromaDB & Web Search
+        &nbsp; | &nbsp;
+        Powered by Groq, ChromaDB and Web Search
     </div>
     """,
     unsafe_allow_html=True,
